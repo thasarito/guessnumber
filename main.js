@@ -1,9 +1,16 @@
+import Toastr from "toastr2";
+
+import "toastr2/dist/toastr.min.css";
+
 import "./style.css";
 
 const app = document.getElementById("app");
 const time = document.getElementById("time");
 const guessed = document.getElementById("guessed");
 const log = document.getElementById("log");
+
+const toastr = new Toastr();
+toastr.options.positionClass = "toast-top-center";
 
 const texts = document.getElementsByClassName("text");
 function formatGuess(ans) {
@@ -26,13 +33,14 @@ let ans = "";
 let curTime = Date.now();
 let startTime = Date.now();
 let elapsed = 0; //ms
+let timerId = null;
 function timerLoop() {
   curTime = Date.now();
   elapsed = curTime - startTime;
   time.innerHTML = msToTime(elapsed);
-  requestAnimationFrame(timerLoop);
+  timerId = requestAnimationFrame(timerLoop);
 }
-timerLoop();
+requestAnimationFrame(timerLoop);
 
 function addGuess(el) {
   const num = el.textContent;
@@ -40,7 +48,7 @@ function addGuess(el) {
   ans += num;
   guessed.innerHTML = formatGuess(ans);
 
-  if (ans.length === 5) {
+  if (ans.length >= 5) {
     startTime = Date.now();
     for (let text of texts) {
       text.parentNode.classList.remove("disabled");
@@ -49,11 +57,12 @@ function addGuess(el) {
     if (guess(ans)) {
       app.innerHTML = arr.join(" ");
       guessed.innerHTML = "r e s e t";
+      cancelAnimationFrame(timerId);
       guessed.onclick = reset;
     } else {
       guessed.innerHTML = "_ _ _ _ _";
-      ans = "";
     }
+    ans = "";
   }
 }
 
@@ -115,8 +124,10 @@ function guess(ansString) {
   ` + log.innerHTML;
 
   if (count.a === 5) {
+    toastr.success(`${formatGuess(ansString)} : ${l}`);
     return true;
   }
+  toastr.error(`${formatGuess(ansString)} : ${l}`);
   return false;
 }
 
@@ -125,5 +136,8 @@ function reset() {
   arr = generateNumbers(arr);
   app.innerHTML = "* * * * *";
   log.innerHTML = "";
+  guessed.innerHTML = "_ _ _ _ _";
   guessed.onclick = null;
+  startTime = Date.now();
+  timerId = requestAnimationFrame(timerLoop);
 }
