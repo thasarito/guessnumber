@@ -1,10 +1,34 @@
 import "./style.css";
 
 const app = document.getElementById("app");
-const answer = document.getElementById("answer");
-const guessBtn = document.getElementById("guess");
-const revealBtn = document.getElementById("reveal");
+const guessed = document.getElementById("guessed");
 const log = document.getElementById("log");
+
+const texts = document.getElementsByClassName("text");
+function formatGuess(ans) {
+  return ans.padEnd(5, "_").split("").join(" ");
+}
+let ans = "";
+function addGuess(el) {
+  const num = el.textContent;
+  el.parentNode.classList.add("disabled");
+  ans += num;
+  guessed.innerHTML = formatGuess(ans);
+
+  if (ans.length === 5) {
+    for (let text of texts) {
+      text.parentNode.classList.remove("disabled");
+    }
+    guess(ans);
+    guessed.innerHTML = "_ _ _ _ _";
+    ans = "";
+  }
+}
+
+for (let text of texts) {
+  text.parentNode.onclick = () => addGuess(text);
+}
+
 function generateNumbers(from = 0, to = 10) {
   const arr = [];
 
@@ -25,11 +49,10 @@ let arr = [];
 arr = generateNumbers(arr);
 console.log(arr);
 
-revealBtn.onclick = () => {
+app.onclick = () => {
   app.innerHTML = arr.join(" ");
 };
-guessBtn.onclick = function guess() {
-  const ansString = answer.value;
+function guess(ansString) {
   const ans = ansString.toString(10).replace(/\D/g, "0").split("").map(Number);
 
   const count = { a: 0, b: 0 };
@@ -52,6 +75,6 @@ guessBtn.onclick = function guess() {
 
   log.innerHTML =
     `
-    <li>${ansString}: ${l}</li>
+    <li>${formatGuess(ansString)} : ${l}</li>
   ` + log.innerHTML;
-};
+}
