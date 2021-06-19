@@ -49,7 +49,6 @@ function addGuess(el) {
   guessed.innerHTML = formatGuess(ans);
 
   if (ans.length >= 5) {
-    startTime = Date.now();
     for (let text of texts) {
       text.parentNode.classList.remove("disabled");
     }
