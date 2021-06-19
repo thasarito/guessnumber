@@ -19,6 +19,10 @@ h1 {
   text-align: center;
 }
 
+#time {
+  text-align: center;
+}
+
 #guess-section {
   width: 100%;
   margin: 50px 0;
@@ -54,7 +58,7 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: large;
+  font-size: 30px;
   color: white;
 }
 

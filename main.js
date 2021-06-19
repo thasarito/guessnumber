@@ -1,6 +1,7 @@
 import "./style.css";
 
 const app = document.getElementById("app");
+const time = document.getElementById("time");
 const guessed = document.getElementById("guessed");
 const log = document.getElementById("log");
 
@@ -8,7 +9,31 @@ const texts = document.getElementsByClassName("text");
 function formatGuess(ans) {
   return ans.padEnd(5, "_").split("").join(" ");
 }
+
+function msToTime(s) {
+  var ms = s % 1000;
+  s = (s - ms) / 1000;
+  var secs = s % 60;
+  s = (s - secs) / 60;
+  var mins = s % 60;
+
+  return (
+    mins.toString().padStart(2, "0") + ":" + secs.toString().padStart(2, "0")
+  );
+}
+
 let ans = "";
+let curTime = Date.now();
+let startTime = Date.now();
+let elapsed = 0; //ms
+function timerLoop() {
+  curTime = Date.now();
+  elapsed = curTime - startTime;
+  time.innerHTML = msToTime(elapsed);
+  requestAnimationFrame(timerLoop);
+}
+timerLoop();
+
 function addGuess(el) {
   const num = el.textContent;
   el.parentNode.classList.add("disabled");
@@ -16,12 +41,19 @@ function addGuess(el) {
   guessed.innerHTML = formatGuess(ans);
 
   if (ans.length === 5) {
+    startTime = Date.now();
     for (let text of texts) {
       text.parentNode.classList.remove("disabled");
     }
-    guess(ans);
-    guessed.innerHTML = "_ _ _ _ _";
-    ans = "";
+
+    if (guess(ans)) {
+      app.innerHTML = arr.join(" ");
+      guessed.innerHTML = "r e s e t";
+      guessed.onclick = reset;
+    } else {
+      guessed.innerHTML = "_ _ _ _ _";
+      ans = "";
+    }
   }
 }
 
@@ -50,7 +82,11 @@ arr = generateNumbers(arr);
 console.log(arr);
 
 app.onclick = () => {
-  app.innerHTML = arr.join(" ");
+  if (app.innerHTML.includes("*")) {
+    app.innerHTML = arr.join(" ");
+  } else {
+    app.innerHTML = "* * * * *";
+  }
 };
 function guess(ansString) {
   const ans = ansString.toString(10).replace(/\D/g, "0").split("").map(Number);
@@ -77,4 +113,17 @@ function guess(ansString) {
     `
     <li>${formatGuess(ansString)} : ${l}</li>
   ` + log.innerHTML;
+
+  if (count.a === 5) {
+    return true;
+  }
+  return false;
+}
+
+function reset() {
+  arr = [];
+  arr = generateNumbers(arr);
+  app.innerHTML = "* * * * *";
+  log.innerHTML = "";
+  guessed.onclick = null;
 }
