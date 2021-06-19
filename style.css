@@ -1,0 +1,35 @@
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+
+html {
+  background: rosybrown;
+}
+
+h1 {
+  text-align: center;
+}
+
+#app {
+  font-size: larger;
+}
+
+#numbers {
+  display: flex;
+}
+
+body {
+  height: 100vh;
+
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+
+  font-family: monospace;
+}
